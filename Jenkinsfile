@@ -1,17 +1,18 @@
-def server = Artifactory.server 'arti'
-server.bypassProxy = true
-// If you're using username and password:
-server.credentialsId = 'jenkins'
-
 pipeline {
     agent any
     stages {
         stage("Preparation") {
             steps {
-                git 'https://github.com/ramonsterj/some.git'
+//                git 'https://github.com/ramonsterj/some.git'
+                sh "chmod +x gradlew"
             }
         }
-        stage('Build') {
+//        stage("Build") {
+//            steps {
+//                sh "./gradlew clean assemble"
+//            }
+//        }
+        stage('Publish to Artifactory') {
             steps {
                 echo('Building...')
                 rtGradleResolver (
@@ -24,13 +25,14 @@ pipeline {
                         id: "rspca-deployer",
                         serverId: "arti",
                         repo: "gradle-dev-local",
-                        deployIvyDescriptors: true,
+                        deployIvyDescriptors: false,
                         deployMavenDescriptors: true
                 )
                 rtGradleRun (
                         usesPlugin: true, // Set to true if the Artifactory Plugin is already defined in build script
-                        tool: "Gradle", // Tool name from Jenkins configuration
+                        tool: "Gradle4", // Tool name from Jenkins configuration
 //                        rootDir: "some",
+                        useWrapper: true,
                         buildFile: 'build.gradle',
                         tasks: 'clean artifactoryPublish',
                         resolverId: "rspca-resolver",
@@ -38,24 +40,5 @@ pipeline {
                 )
             }
         }
-//        stage('Publish to Artifactory') {
-//            steps {
-//                rtUpload (
-//                        serverId: "arti",
-//                        spec:
-//                                """{
-//                            "files": [
-//                                {
-//                                "pattern": "build/libs/*.jar",
-//                                "target": "gradle-dev-local"
-//                                }
-//                            ]
-//                        }"""
-//                )
-//                rtPublishBuildInfo (
-//                        serverId: "arti"
-//                )
-//            }
-//        }
     }
 }

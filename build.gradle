@@ -19,6 +19,7 @@ plugins {
 allprojects {
     apply plugin: "com.jfrog.artifactory"
 }
+artifactoryPublish.skip = false
 
 artifactory {
     contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
