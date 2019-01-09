@@ -1,7 +1,11 @@
 package com.tatanga;
 
+import uk.org.rspca.MyClass;
+
 public class SuperClass {
     public static void main(String[] args) {
-        System.out.println("Super Hello!!!");
+        MyClass some = new MyClass();
+        System.out.println(some.echo("Hello!"));
+
     }
 }
